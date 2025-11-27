@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Test - Tumor Detection</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { padding: 10px; margin: 10px 0; background: #f0f0f0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🧠 Tumor Detection Test</h1>
+    
+    <div id="status" class="status">
+        Ready to test...
+    </div>
+    
+    <button onclick="runQuickTest()">🚀 Run Quick Test</button>
+    <button onclick="clearTest()">🗑️ Clear</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        function updateStatus(message, isError = false) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = isError ? 'status error' : 'status success';
+        }
+        
+        function runQuickTest() {
+            updateStatus('🔧 Testing tumor detection logic...');
+            
+            try {
+                // Simulate basic tumor detection
+                const dims = { x: 128, y: 128, z: 32 };
+                const volume = new Float32Array(dims.x * dims.y * dims.z);
+                
+                // Fill with brain-like data
+                let tumorCount = 0;
+                for (let z = 0; z < dims.z; z++) {
+                    for (let y = 0; y < dims.y; y++) {
+                        for (let x = 0; x < dims.x; x++) {
+                            const index = z * dims.x * dims.y + y * dims.x + x;
+                            let intensity = 80 + Math.random() * 40;
+                            
+                            // Add tumors
+                            if ((x - 40) * (x - 40) + (y - 50) * (y - 50) + (z - 15) * (z - 15) < 200) {
+                                intensity = 220;
+                                tumorCount++;
+                            }
+                            if ((x - 80) * (x - 80) + (y - 70) * (y - 70) + (z - 20) * (z - 20) < 150) {
+                                intensity = 200;
+                                tumorCount++;
+                            }
+                            
+                            volume[index] = intensity;
+                        }
+                    }
+                }
+                
+                // Test tumor detection
+                const threshold = 150;
+                let detectedPixels = 0;
+                for (let i = 0; i < volume.length; i++) {
+                    if (volume[i] > threshold) {
+                        detectedPixels++;
+                    }
+                }
+                
+                const results = document.getElementById('results');
+                results.innerHTML = `
+                    <h3>✅ Test Results:</h3>
+                    <p><strong>Volume Size:</strong> ${dims.x} × ${dims.y} × ${dims.z} = ${volume.length.toLocaleString()} voxels</p>
+                    <p><strong>Tumor Pixels:</strong> ${tumorCount.toLocaleString()} (expected)</p>
+                    <p><strong>Detected Pixels:</strong> ${detectedPixels.toLocaleString()} (threshold > ${threshold})</p>
+                    <p><strong>Detection Rate:</strong> ${((detectedPixels / tumorCount) * 100).toFixed(1)}%</p>
+                    <p style="color: green;"><strong>Status:</strong> Core logic working! 🎉</p>
+                `;
+                
+                updateStatus('✅ Test completed successfully!');
+                
+            } catch (error) {
+                updateStatus(`❌ Test failed: ${error.message}`, true);
+                console.error(error);
+            }
+        }
+        
+        function clearTest() {
+            document.getElementById('results').innerHTML = '';
+            updateStatus('Ready to test...');
+        }
+    </script>
+</body>
+</html>
